@@ -2,10 +2,11 @@ package me.nanip.arkradarhelper.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Ark family: near-black / white / cyan industrial information system
+val ArkBlack = Color(0xFF0A0B0D)
+val ArkSurface = Color(0xFF141619)
+val ArkSurfaceHigh = Color(0xFF1D2126)
+val ArkWhite = Color(0xFFF2F4F6)
+val ArkGrey = Color(0xFF8A939C)
+val ArkCyan = Color(0xFF18D1FF)
+val ArkCyanDim = Color(0xFF0E6B82)

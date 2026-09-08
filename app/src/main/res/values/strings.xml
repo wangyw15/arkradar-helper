@@ -1,3 +1,23 @@
 <resources>
-    <string name="app_name">ArkRadar Helper</string>
+    <string name="app_name">方舟雷达助手</string>
+
+    <!-- Top bar -->
+    <string name="top_bar_title">方舟雷达助手</string>
+    <string name="top_bar_title_en">ARK RADAR HELPER</string>
+    <string name="status_standby">待命 STANDBY</string>
+
+    <!-- Stage -->
+    <string name="stage_index">01</string>
+    <string name="stage_title">方舟雷达</string>
+    <string name="stage_title_en">ARK RADAR</string>
+    <string name="stage_subtitle">无障碍自动点击助手</string>
+    <string name="stage_subtitle_en">ACCESSIBILITY AUTO-CLICK ASSISTANT</string>
+
+    <!-- Action -->
+    <string name="action_start_greeting">开始打招呼</string>
+    <string name="action_start_greeting_en">START GREETING</string>
+
+    <!-- Bottom baseline -->
+    <string name="baseline_module">MODULE // AUTO ASSIST</string>
+    <string name="baseline_version">VER 1.0</string>
 </resources>
