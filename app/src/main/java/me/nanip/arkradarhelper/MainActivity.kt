@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,7 +66,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ArkRadarScreen(onStartGreeting: () -> Unit, modifier: Modifier = Modifier) {
+fun ArkRadarScreen(
+    onStartGreeting: () -> Unit,
+    modifier: Modifier = Modifier,
+    accessibilityGranted: Boolean = false
+) {
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
 
@@ -137,6 +143,17 @@ fun ArkRadarScreen(onStartGreeting: () -> Unit, modifier: Modifier = Modifier) {
                 }
             }
 
+            // Accessibility permission status (read-only indicator)
+            AnimatedVisibility(
+                visible = visible,
+                enter = fadeIn(tween(500, delayMillis = 100)) +
+                        slideInVertically(tween(500, delayMillis = 100)) { it / 4 }
+            ) {
+                AccessibilityStatusRow(granted = accessibilityGranted)
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
             // Primary action
             AnimatedVisibility(
                 visible = visible,
@@ -196,6 +213,66 @@ private fun TopBar() {
             fontSize = 11.sp,
             letterSpacing = 1.sp
         )
+    }
+}
+
+/**
+ * Read-only accessibility permission indicator.
+ * Squared 1px-stroke box; cyan fill + check when granted, hollow when not.
+ */
+@Composable
+private fun AccessibilityStatusRow(granted: Boolean) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ReadOnlyCheckbox(checked = granted)
+        Spacer(modifier = Modifier.width(12.dp))
+        Column {
+            Text(
+                text = stringResource(R.string.accessibility_permission),
+                color = ArkWhite,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = stringResource(R.string.accessibility_permission_en),
+                color = ArkGrey,
+                fontSize = 10.sp,
+                letterSpacing = 2.sp
+            )
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = stringResource(
+                if (granted) R.string.accessibility_enabled
+                else R.string.accessibility_disabled
+            ),
+            color = if (granted) ArkCyan else ArkGrey,
+            fontSize = 11.sp,
+            letterSpacing = 1.sp
+        )
+    }
+}
+
+@Composable
+private fun ReadOnlyCheckbox(checked: Boolean) {
+    val borderColor = if (checked) ArkCyan else ArkGrey.copy(alpha = 0.6f)
+    val fillColor = if (checked) ArkCyan else Color.Transparent
+    val checkColor = MaterialTheme.colorScheme.onPrimary
+    Canvas(
+        modifier = Modifier
+            .size(20.dp)
+            .border(1.dp, borderColor)
+            .background(fillColor)
+    ) {
+        if (checked) {
+            val w = size.width
+            val h = size.height
+            val stroke = 2.dp.toPx()
+            drawLine(checkColor, Offset(w * 0.22f, h * 0.52f), Offset(w * 0.42f, h * 0.72f), stroke)
+            drawLine(checkColor, Offset(w * 0.42f, h * 0.72f), Offset(w * 0.78f, h * 0.28f), stroke)
+        }
     }
 }
 
@@ -290,10 +367,18 @@ private fun BlueprintBackdrop() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "Permission disabled")
 @Composable
 fun ArkRadarScreenPreview() {
     ArkRadarHelperTheme {
-        ArkRadarScreen(onStartGreeting = {})
+        ArkRadarScreen(onStartGreeting = {}, accessibilityGranted = false)
+    }
+}
+
+@Preview(showBackground = true, name = "Permission enabled")
+@Composable
+fun ArkRadarScreenGrantedPreview() {
+    ArkRadarHelperTheme {
+        ArkRadarScreen(onStartGreeting = {}, accessibilityGranted = true)
     }
 }
