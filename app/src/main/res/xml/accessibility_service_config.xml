@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  无障碍服务配置（占位，后续按自动点击需求调整）：
+  - description：系统无障碍设置页中向用户展示的用途说明
+  - eventTypes：订阅的事件类型，占位为 typeAllMask，后续按需收窄以降低开销
+  - feedbackType：反馈类型，占位为 feedbackGeneric
+  - flags：canRetrieveWindowContent 允许读取窗口内容（找控件所需）；
+          canPerformGestures 允许分发点击手势（自动点击所需）
+  - notificationTimeout：事件回调最小间隔（毫秒），占位 100ms
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/accessibility_service_description"
+    android:accessibilityEventTypes="typeAllMask"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagDefault|flagRetrieveInteractiveWindows"
+    android:canRetrieveWindowContent="true"
+    android:canPerformGestures="true"
+    android:notificationTimeout="100" />

@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">方舟雷达助手</string>
 
+    <!-- Accessibility service（占位文案） -->
+    <!-- 系统无障碍列表中显示的服务名称 -->
+    <string name="accessibility_service_label">方舟雷达自动点击</string>
+    <!-- 系统无障碍详情页中向用户展示的用途说明（占位，正式发布前需替换为真实说明） -->
+    <string name="accessibility_service_description">用于自动执行“打招呼”点击操作的无障碍服务。</string>
+
     <!-- Top bar -->
     <string name="top_bar_title">方舟雷达助手</string>
     <string name="top_bar_title_en">ARK RADAR HELPER</string>
@@ -18,6 +24,8 @@
     <string name="accessibility_permission_en">ACCESSIBILITY PERMISSION</string>
     <string name="accessibility_enabled">已启用 ENABLED</string>
     <string name="accessibility_disabled">未启用 DISABLED</string>
+    <!-- 未授权时点击复选框的无障碍朗读标签 -->
+    <string name="accessibility_go_enable">前往开启无障碍权限</string>
     <string name="action_start_greeting">开始打招呼</string>
     <string name="action_start_greeting_en">START GREETING</string>
 

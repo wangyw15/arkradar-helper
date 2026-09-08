@@ -11,6 +11,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,11 +40,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import me.nanip.arkradarhelper.accessibility.AccessibilityHelper
 import me.nanip.arkradarhelper.ui.theme.ArkCyan
 import me.nanip.arkradarhelper.ui.theme.ArkCyanDim
 import me.nanip.arkradarhelper.ui.theme.ArkGrey
@@ -55,7 +63,29 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ArkRadarHelperTheme {
+                val context = LocalContext.current
+                // 复选框状态 = AccessibilityHelper.isAccessibilityEnabled 的返回值，
+                // 并在每次回到前台（ON_RESUME）时重新查询，以便用户开启权限返回后立即刷新
+                var accessibilityGranted by remember {
+                    mutableStateOf(AccessibilityHelper.isAccessibilityEnabled(context))
+                }
+                val lifecycleOwner = LocalLifecycleOwner.current
+                DisposableEffect(lifecycleOwner) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        if (event == Lifecycle.Event.ON_RESUME) {
+                            accessibilityGranted =
+                                AccessibilityHelper.isAccessibilityEnabled(context)
+                        }
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+                }
+
                 ArkRadarScreen(
+                    accessibilityGranted = accessibilityGranted,
+                    onRequestAccessibility = {
+                        AccessibilityHelper.openAccessibilitySettings(context)
+                    },
                     onStartGreeting = {
                         // TODO: 启动无障碍自动点击助手
                     }
@@ -69,7 +99,8 @@ class MainActivity : ComponentActivity() {
 fun ArkRadarScreen(
     onStartGreeting: () -> Unit,
     modifier: Modifier = Modifier,
-    accessibilityGranted: Boolean = false
+    accessibilityGranted: Boolean = false,
+    onRequestAccessibility: () -> Unit = {}
 ) {
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { visible = true }
@@ -149,7 +180,10 @@ fun ArkRadarScreen(
                 enter = fadeIn(tween(500, delayMillis = 100)) +
                         slideInVertically(tween(500, delayMillis = 100)) { it / 4 }
             ) {
-                AccessibilityStatusRow(granted = accessibilityGranted)
+                AccessibilityStatusRow(
+                    granted = accessibilityGranted,
+                    onRequestPermission = onRequestAccessibility
+                )
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -217,13 +251,22 @@ private fun TopBar() {
 }
 
 /**
- * Read-only accessibility permission indicator.
+ * Accessibility permission indicator.
+ * 已授权时为纯展示；未授权时整行可点击，跳转系统无障碍设置页。
  * Squared 1px-stroke box; cyan fill + check when granted, hollow when not.
  */
 @Composable
-private fun AccessibilityStatusRow(granted: Boolean) {
+private fun AccessibilityStatusRow(granted: Boolean, onRequestPermission: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                enabled = !granted,
+                onClickLabel = stringResource(R.string.accessibility_go_enable),
+                role = Role.Button,
+                onClick = onRequestPermission
+            )
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         ReadOnlyCheckbox(checked = granted)
@@ -252,6 +295,15 @@ private fun AccessibilityStatusRow(granted: Boolean) {
             fontSize = 11.sp,
             letterSpacing = 1.sp
         )
+        if (!granted) {
+            // 未授权时的可点击提示
+            Text(
+                text = "›",
+                color = ArkGrey,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(start = 4.dp)
+            )
+        }
     }
 }
 
