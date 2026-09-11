@@ -1,6 +1,10 @@
 package me.nanip.arkradarhelper
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -61,6 +65,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        requestNotificationPermissionIfNeeded()
         setContent {
             ArkRadarHelperTheme {
                 val context = LocalContext.current
@@ -87,11 +92,36 @@ class MainActivity : ComponentActivity() {
                         AccessibilityHelper.openAccessibilitySettings(context)
                     },
                     onStartGreeting = {
-                        // TODO: 启动无障碍自动点击助手
+                        if (!AccessibilityHelper.isAccessibilityEnabled(context)) {
+                            // 未授权时先引导用户开启无障碍权限
+                            AccessibilityHelper.openAccessibilitySettings(context)
+                        } else {
+                            // 置位待打招呼标志并拉起方舟雷达，服务检测到目标窗口后导航至好友列表
+                            AccessibilityHelper.requestAutoGreeting()
+                            if (!AccessibilityHelper.launchTargetApp(context)) {
+                                Toast.makeText(
+                                    context,
+                                    R.string.target_app_not_installed,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     }
                 )
             }
         }
+    }
+
+    /**
+     * Android 13+ 运行时申请通知权限。
+     * 部分 ROM 将 Toast 归入通知管理，未授权时 Toast 会被静默拦截。
+     */
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
+        ) return
+        requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0)
     }
 }
 

@@ -3,9 +3,8 @@
 
     <!-- Accessibility service（占位文案） -->
     <!-- 系统无障碍列表中显示的服务名称 -->
-    <string name="accessibility_service_label">方舟雷达自动点击</string>
-    <!-- 系统无障碍详情页中向用户展示的用途说明（占位，正式发布前需替换为真实说明） -->
-    <string name="accessibility_service_description">用于自动执行“打招呼”点击操作的无障碍服务。</string>
+    <string name="accessibility_service_label">方舟雷达自动打招呼</string>
+    <string name="accessibility_service_description">用于自动执行“打招呼”操作的无障碍服务。</string>
 
     <!-- Top bar -->
     <string name="top_bar_title">方舟雷达助手</string>
@@ -14,10 +13,10 @@
 
     <!-- Stage -->
     <string name="stage_index">01</string>
-    <string name="stage_title">方舟雷达</string>
-    <string name="stage_title_en">ARK RADAR</string>
-    <string name="stage_subtitle">无障碍自动点击助手</string>
-    <string name="stage_subtitle_en">ACCESSIBILITY AUTO-CLICK ASSISTANT</string>
+    <string name="stage_title">方舟雷达助手</string>
+    <string name="stage_title_en">ARK RADAR HELPER</string>
+    <string name="stage_subtitle">一键打招呼</string>
+    <string name="stage_subtitle_en">Auto Greeting</string>
 
     <!-- Action -->
     <string name="accessibility_permission">无障碍权限</string>
@@ -28,8 +27,13 @@
     <string name="accessibility_go_enable">前往开启无障碍权限</string>
     <string name="action_start_greeting">开始打招呼</string>
     <string name="action_start_greeting_en">START GREETING</string>
+    <!-- 目标应用未安装时的提示 -->
+    <string name="target_app_not_installed">未安装目标应用（方舟雷达）</string>
+    <!-- 自动打招呼流程中读取到的好友数量提示 -->
+    <string name="friends_count_toast">好友数量：%1$d</string>
 
     <!-- Bottom baseline -->
     <string name="baseline_module">MODULE // AUTO ASSIST</string>
     <string name="baseline_version">VER 1.0</string>
+    <string name="grant_a11y_permission">请授予无障碍权限</string>
 </resources>
